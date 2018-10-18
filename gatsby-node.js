@@ -35,6 +35,8 @@ const createChildren = (entries, parentId, createNode) => {
   return childIds;
 };
 
+const configureFeedStory = data => {};
+
 async function sourceNodes({ boundActionCreators }, { rssURL }) {
   const { createNode } = boundActionCreators;
   const data = await promisifiedParseURL(rssURL);
@@ -43,14 +45,14 @@ async function sourceNodes({ boundActionCreators }, { rssURL }) {
   }
   const { title, description, link, entries } = data;
   const childrenIds = createChildren(entries, link, createNode);
-  const feedStory = {
+  const feedStory = Object.assign({
     id: link,
     title,
     description,
     link,
     parent: null,
     children: childrenIds
-  };
+  }, data);
 
   feedStory.internal = { type: 'rssFeed', contentDigest: createContentDigest(feedStory) };
 
