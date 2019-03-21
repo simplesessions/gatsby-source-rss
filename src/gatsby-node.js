@@ -1,11 +1,10 @@
 const parser = require('rss-parser');
 const crypto = require('crypto');
 
-const createContentDigest = obj =>
-  crypto
-    .createHash('md5')
-    .update(JSON.stringify(obj))
-    .digest('hex');
+const createContentDigest = obj => crypto
+  .createHash('md5')
+  .update(JSON.stringify(obj))
+  .digest('hex');
 
 function promisifiedParseURL(url) {
   return new Promise((resolve, reject) => {
@@ -21,11 +20,11 @@ function promisifiedParseURL(url) {
 const createChildren = (entries, parentId, createNode) => {
   const childIds = [];
   entries.forEach((entry) => {
-    childIds.push(entry.link);
+    childIds.push(entry.guid);
     const node = Object.assign({}, entry, {
-      id: entry.link,
+      id: entry.guid,
       title: entry.title,
-      link: entry.link,
+      link: entry.guid,
       description: entry.description,
       parent: parentId,
       children: [],
@@ -47,7 +46,9 @@ async function sourceNodes({ boundActionCreators }, { rssURL }) {
   if (!data) {
     return;
   }
-  const { title, description, link, entries } = data;
+  const {
+    title, description, link, entries,
+  } = data;
   const childrenIds = createChildren(entries, link, createNode);
   const feedStory = Object.assign(
     {
